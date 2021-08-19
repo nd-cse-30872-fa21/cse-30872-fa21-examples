@@ -14,6 +14,7 @@ ASSIGNMENTS     = {}
 DREDD_QUIZ_URL  = 'https://dredd.h4x0r.space/quiz/cse-30872-fa21/'
 DREDD_CODE_SLUG = 'debug' if bool(os.environ.get('DEBUG', False)) else 'code'
 DREDD_CODE_URL  = f'https://dredd.h4x0r.space/{DREDD_CODE_SLUG}/cse-30872-fa21/'
+DREDD_CODE_MAX  = 6.0
 
 # Utilities
 
@@ -21,7 +22,7 @@ def add_assignment(assignment, path=None):
     if path is None:
         path = assignment
 
-    if assignment.startswith('reading') or assignment.startswith('challenge'):
+    if assignment.startswith('exercise'):
         ASSIGNMENTS[assignment] = path
 
 def print_results(results, print_status=True):
@@ -67,10 +68,10 @@ def check_quiz(assignment, path):
     return int(response.json().get('status', 1))
 
 def check_code(assignment, path):
-    sources = glob.glob(os.path.join(path, 'program.*'))
+    sources = glob.glob(os.path.join(path, 'solution.*'))
 
     if not sources:
-        print('No code found (program.*)')
+        print('No code found (solution.*)')
         return 1
 
     result = 1
@@ -79,7 +80,7 @@ def check_code(assignment, path):
         response = requests.post(DREDD_CODE_URL + assignment, files={'source': open(source)})
         print_results(response.json(), False)
 
-        result = int(response.json().get('status', 1))
+        result = min(result, int(response.json().get('status', 1)))
     return result
 
 # Main Execution
@@ -110,14 +111,12 @@ def main():
     exit_code = 0
 
     for assignment, path in sorted(ASSIGNMENTS.items()):
-        if 'reading' in assignment:
-            exit_code += check_quiz(assignment, path)
-        elif 'challenge' in assignment:
+        if 'exercise' in assignment:
             exit_code += check_code(assignment, path)
 
     sys.exit(exit_code)
 
+# vim: set sts=4 sw=4 ts=8 expandtab ft=python:
+
 if __name__ == '__main__':
     main()
-
-# vim: set sts=4 sw=4 ts=8 expandtab ft=python:
