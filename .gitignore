@@ -1,0 +1,9 @@
+*~
+*.o
+*.pyc
+*.swp
+*.exe
+*.so
+*.a
+solution
+template
