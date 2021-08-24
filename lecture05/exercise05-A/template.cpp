@@ -1,4 +1,4 @@
-// pbbmatched.cpp
+// Exercise 05-A: PBB-matched
 
 #include <iomanip>
 #include <iostream>

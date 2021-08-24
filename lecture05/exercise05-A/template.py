@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Exercise 05-A: PBB-matched
+
 import sys
 
 # Functions
