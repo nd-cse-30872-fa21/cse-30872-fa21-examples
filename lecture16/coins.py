@@ -39,9 +39,10 @@ def compute_table_forward(n, coins=COINS):
     # For each entry i in table, generate successive values:
     #
     #   table[i + coin] = min(table[i] + 1, table[i + coin])
-    for i in range(1, n - max(coins) + 1):
+    for i in range(1, n + 1):
         for coin in coins:
-            table[i + coin] = min(table[i] + 1, table[i + coin])
+            if (i + coin) <= n:
+                table[i + coin] = min(table[i] + 1, table[i + coin])
 
     return table
 
@@ -61,11 +62,12 @@ def compute_table_augment(n, coins=COINS):
     # For each entry i in table, generate successive values:
     #
     #   table[i + coin] = min(table[i] + 1, table[i + coin])
-    for i in range(1, n - max(coins) + 1):
+    for i in range(1, n + 1):
         for coin in coins:
-            new_coins = table[i] + [coin]
-            if len(new_coins) < len(table[i + coin]):
-                table[i + coin] = new_coins
+            if (i + coin) <= n:
+                new_coins = table[i] + [coin]
+                if len(new_coins) < len(table[i + coin]):
+                    table[i + coin] = new_coins
 
     return table
 
