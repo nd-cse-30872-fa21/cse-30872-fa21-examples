@@ -1,4 +1,4 @@
-// traversal.cpp
+// Exercise 17-A: Tree Traversal
 
 #include <iostream>
 #include <queue>
