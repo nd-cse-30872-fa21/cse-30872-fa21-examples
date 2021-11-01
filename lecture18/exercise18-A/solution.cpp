@@ -1,4 +1,4 @@
-// walk_tgf.cpp: read TGF and walk it
+// Exercise 18-A: Graph Traversal
 
 #include <iostream>
 #include <queue>
@@ -20,45 +20,30 @@ typedef enum {
 
 // Graph structure
 
-struct Graph {
-    unordered_map<int, string>	    labels;
-    unordered_map<int, set<int>>    edges;
-};
+typedef unordered_map<int, set<int>> Graph;
 
 // Load graph from standard input
 
 void load_graph(Graph &g) {
-    string line;
-
-    // Read labels (vertices)
-    while (getline(cin, line) && line[0] != '#') {
-        stringstream ss(line);
-        int node;
-        string label;
-
-        ss >> node >> label;
-        g.labels[node] = label;
-    }
-
-    // Read edges (vertices)
+    // Read edges
     int source, target;
     while (cin >> source >> target) {
-        g.edges[source].insert(target);
+        g[source].insert(target);
     }
 }
 
 // Depth-First-Search (recursive)
 
-void walk_graph_dfs_rec(Graph &g, int v, set<int> &marked) {
+void walk_graph_dfs_rec(Graph &g, int v, set<int> &visited) {
     // TODO
-    if (marked.count(v))
+    if (visited.count(v))
     	return;
 
     cout << v << endl;
 
-    marked.insert(v);
-    for (auto &u : g.edges[v])
-    	walk_graph_dfs_rec(g, u, marked);
+    visited.insert(v);
+    for (auto &u : g[v])
+    	walk_graph_dfs_rec(g, u, visited);
 }
 
 // Depth-First-Search (iterative)
@@ -66,21 +51,21 @@ void walk_graph_dfs_rec(Graph &g, int v, set<int> &marked) {
 void walk_graph_dfs_iter(Graph &g, int v) {
     // TODO
     stack<int> frontier;
-    set<int>   marked;
+    set<int>   visited;
 
     frontier.push(v);
 
     while (!frontier.empty()) {
     	auto n = frontier.top(); frontier.pop();
 
-    	if (marked.count(n))
+    	if (visited.count(n))
     	    continue;
 
     	cout << n << endl;
 
-    	marked.insert(n);
+    	visited.insert(n);
 
-    	for (auto it = g.edges[n].rbegin(); it != g.edges[n].rend(); it++)
+    	for (auto it = g[n].rbegin(); it != g[n].rend(); it++)
     	    frontier.push(*it);
     }
 }
@@ -90,21 +75,21 @@ void walk_graph_dfs_iter(Graph &g, int v) {
 void walk_graph_bfs_iter(Graph &g, int v) {
     // TODO
     queue<int> frontier;
-    set<int>   marked;
+    set<int>   visited;
 
     frontier.push(v);
 
     while (!frontier.empty()) {
     	auto n = frontier.front(); frontier.pop();
 
-    	if (marked.count(n))
+    	if (visited.count(n))
     	    continue;
 
     	cout << n << endl;
 
-    	marked.insert(n);
+    	visited.insert(n);
 
-    	for (auto &u : g.edges[n])
+    	for (auto &u : g[n])
     	    frontier.push(u);
     }
 }
@@ -112,11 +97,11 @@ void walk_graph_bfs_iter(Graph &g, int v) {
 // Walk graph dispatch function
 
 void walk_graph(Graph &g, int root, WalkType w) {
-    set<int> marked;
+    set<int> visited;
 
     switch (w) {
         case DFS_REC:
-            walk_graph_dfs_rec(g, root, marked);
+            walk_graph_dfs_rec(g, root, visited);
             break;
         case DFS_ITER:
             walk_graph_dfs_iter(g, root);
@@ -130,12 +115,9 @@ void walk_graph(Graph &g, int root, WalkType w) {
     }
 }
 
-
 // Main execution
 
 int main(int argc, char *argv[]) {
-    Graph g;
-
     if (argc != 3) {
         cerr << "Usage: " << argv[0] << " root [0 = DFS_REC | 1 = DFS_ITER | 2 = BFS_ITER]" << endl;
         return EXIT_FAILURE;
@@ -143,6 +125,8 @@ int main(int argc, char *argv[]) {
 
     int root = atoi(argv[1]);
     int walk = atoi(argv[2]);
+
+    Graph g;
 
     load_graph(g);
     walk_graph(g, root, static_cast<WalkType>(walk));
