@@ -25,6 +25,7 @@ typedef unordered_map<int, int>		Visited;
 // Functions
 
 Graph read_graph(int n, int m) {
+    // Construct adjacency list
     Graph g;
     int s, t;
 
@@ -38,17 +39,23 @@ Graph read_graph(int n, int m) {
 }
 
 bool is_bicolorable(Graph &g) {
+    // Determines if graph is bicolorable by performing DFS iteratively
     Frontier frontier;
     Visited  visited;
 
+    // Establisn frontier with initial node and color
     frontier.push(make_tuple(0, BLUE));
 
+    // While there are still nodes in the frontier
     while (!frontier.empty()) {
+    	// Pop one node from frontier
     	auto curr  = frontier.top(); frontier.pop();
-    	auto node  = get<0>(curr);
-    	auto color = get<1>(curr);
+    	auto node  = get<0>(curr);  // Access first attribute (node)
+    	auto color = get<1>(curr);  // Access second attribute (color)
 
+	// Check if node has been visited
     	if (visited.count(node)) {
+    	    // Check that new color matches old color
     	    if (color != visited[node]) {
     	    	return false;
 	    }
@@ -56,8 +63,10 @@ bool is_bicolorable(Graph &g) {
 	    continue;
 	}
 
+	// Mark node has been visited
 	visited[node] = color;
 
+	// Add neighbors to frontier
 	for (auto &u : g[node]) {
 	    frontier.push(make_tuple(u, (color + 1) % 2));
 	}
