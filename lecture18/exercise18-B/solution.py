@@ -13,7 +13,7 @@ RED  = 1
 # Read Graph
 
 def read_graph(n, m):
-    ''' Construct adjacency set '''
+    ''' Construct adjacency list '''
     g = {v: [] for v in range(n)}
     #g = collections.defaultdict(list)
 
