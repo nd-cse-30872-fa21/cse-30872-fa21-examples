@@ -14,12 +14,13 @@ RED  = 1
 
 def read_graph(n, m):
     ''' Construct adjacency set '''
-    g = {v: set() for v in range(n)}
+    g = {v: [] for v in range(n)}
+    #g = collections.defaultdict(list)
 
     for _ in range(m):
         s, t = map(int, sys.stdin.readline().split())
-        g[s].add(t)
-        g[t].add(s)
+        g[s].append(t)
+        g[t].append(s)
 
     return g
 
